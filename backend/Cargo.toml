@@ -1,0 +1,25 @@
+[package]
+name = "expenses-tracker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+argon2 = "0.5.3"
+async-trait = "0.1.89"
+axum = "0.8.6"
+axum-extra = { version = "0.10.3", features = ["typed-header"] }
+chrono = "0.4.42"
+dotenv = "0.15.0"
+email_address = "0.2.9"
+get_if_addrs = "0.5.3"
+jsonwebtoken = { version = "10.0.0", features = ["aws_lc_rs"] }
+password-hash = "0.5.0"
+rand_core = "0.9.3"
+serde = "1.0.228"
+serde_json = "1.0.145"
+surrealdb = "2.3.10"
+thiserror = "2.0.17"
+tokio = { version = "1.47.1", features = ["full"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+zeroize = "1.8.2"

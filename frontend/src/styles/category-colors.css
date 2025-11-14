@@ -1,0 +1,24 @@
+:root {
+	--category-red: oklch(0.6275 0.2346 29.2341);
+	--category-orange: oklch(0.6447 0.2345 57.2953);
+	--category-amber: oklch(0.7076 0.2021 91.8834);
+	--category-yellow: oklch(0.7499 0.1923 101.9612);
+	--category-lime: oklch(0.7521 0.1921 134.8976);
+	--category-green: oklch(0.5919 0.2186 10.5826);
+	--category-emerald: oklch(0.5521 0.2246 142.6341);
+	--category-teal: oklch(0.5901 0.2176 185.5374);
+	--category-cyan: oklch(0.6907 0.1554 160.3454);
+	--category-sky: oklch(0.6907 0.1554 197.1387);
+	--category-blue: oklch(0.6723 0.1606 244.9955);
+	--category-indigo: oklch(0.6211 0.1851 264.7696);
+	--category-violet: oklch(0.6211 0.1851 290.6346);
+	--category-purple: oklch(0.6188 0.2376 25.7658);
+	--category-fuchsia: oklch(0.6188 0.2376 328.9834);
+	--category-pink: oklch(0.6275 0.2346 346.7196);
+	--category-rose: oklch(0.6275 0.2346 29.2341);
+	--category-slate: oklch(0.5637 0.0078 247.9662);
+	--category-gray: oklch(0.5637 0.0078 247.9662);
+	--category-zinc: oklch(0.5637 0.0078 247.9662);
+	--category-neutral: oklch(0.5637 0.0078 247.9662);
+	--category-stone: oklch(0.5637 0.0078 247.9662);
+}
