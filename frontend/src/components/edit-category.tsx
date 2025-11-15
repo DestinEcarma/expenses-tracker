@@ -179,7 +179,9 @@ function EditCategory({ id, name, icon, open, setOpen, onSave, onDelete }: Categ
 							{!isDesktop && editButton}
 							{isDesktop && deleteButton}
 							<UI.Close asChild>
-								<Button variant="outline">Cancel</Button>
+								<Button variant="outline" onClick={() => form.reset()}>
+									Cancel
+								</Button>
 							</UI.Close>
 							{!isDesktop && deleteButton}
 							{isDesktop && editButton}
