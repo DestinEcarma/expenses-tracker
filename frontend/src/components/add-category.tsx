@@ -48,7 +48,7 @@ function AddCategory({ onAdd }: { onAdd?: (category: Category) => void }) {
 		},
 		onError: ({ title, details, status, error }) => {
 			if (error?.name) {
-				form.setError("name", { message: error.name as string });
+				form.setError("name", { message: error.name });
 			} else {
 				toast.error(`${status} ${title}`, { description: details });
 			}
