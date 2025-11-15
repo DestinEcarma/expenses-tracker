@@ -3,17 +3,20 @@ import { useCallback, useRef } from "react";
 interface UseLongPressOptions {
 	onClick?: (e: React.MouseEvent) => void;
 	threshold?: number;
+	moveThreshold?: number;
 }
 
 export function useLongPress(
 	onLongPress: (e: React.MouseEvent | React.TouchEvent) => void,
-	{ threshold = 500, onClick }: UseLongPressOptions = {},
+	{ threshold = 500, moveThreshold = 10, onClick }: UseLongPressOptions = {},
 ) {
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const startPos = useRef({ x: 0, y: 0 });
+	const isLongPress = useRef(false);
 
 	const handleClick = useCallback(
 		(e: React.MouseEvent) => {
-			if (!timerRef.current) {
+			if (!isLongPress.current) {
 				onClick?.(e);
 			}
 		},
@@ -22,8 +25,13 @@ export function useLongPress(
 
 	const start = useCallback(
 		(e: React.MouseEvent | React.TouchEvent) => {
+			isLongPress.current = false;
+
+			const point = "touches" in e ? e.touches[0] : e;
+			startPos.current = { x: point.clientX, y: point.clientY };
+
 			timerRef.current = setTimeout(() => {
-				timerRef.current = null;
+				isLongPress.current = true;
 				onLongPress?.(e);
 			}, threshold);
 		},
@@ -37,21 +45,23 @@ export function useLongPress(
 		}
 	}, []);
 
-	const onMouseDown = (e: React.MouseEvent) => start(e);
-	const onMouseUp = () => clear();
-	const onMouseLeave = () => clear();
+	const onMove = (e: React.TouchEvent) => {
+		const point = e.touches[0];
+		const dx = Math.abs(point.clientX - startPos.current.x);
+		const dy = Math.abs(point.clientY - startPos.current.y);
 
-	const onTouchStart = (e: React.TouchEvent) => start(e);
-	const onTouchEnd = () => clear();
-	const onTouchMove = () => clear();
+		if (dx > moveThreshold || dy > moveThreshold) {
+			clear();
+		}
+	};
 
 	return {
 		onClick: handleClick,
-		onMouseDown,
-		onMouseUp,
-		onMouseLeave,
-		onTouchStart,
-		onTouchEnd,
-		onTouchMove,
+		onMouseDown: start,
+		onMouseUp: clear,
+		onMouseLeave: clear,
+		onTouchStart: start,
+		onTouchEnd: clear,
+		onTouchMove: onMove,
 	};
 }
