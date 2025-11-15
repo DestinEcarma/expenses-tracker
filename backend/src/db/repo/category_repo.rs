@@ -79,6 +79,41 @@ impl<'a> CategoryRepo<'a> {
             .ok_or(DbError::NotCreated("category".into()))
     }
 
+    pub async fn edit(
+        &self,
+        user_id: RecordId,
+        category_id: RecordId,
+        name: String,
+        icon: String,
+    ) -> Result<(), DbError> {
+        let sql = r#"
+        UPDATE ONLY (
+            SELECT VALUE id
+            FROM ONLY $user->user_category.out
+            WHERE id = $category
+            LIMIT 1
+        ) SET name = $name, icon = $icon;
+        "#;
+
+        self.db
+            .query(sql)
+            .bind(("user", user_id))
+            .bind(("category", category_id))
+            .bind(("name", name))
+            .bind(("icon", icon))
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn delete(&self, category_id: RecordId) -> Result<(), DbError> {
+        let sql = "DELETE ONLY $category RETURN BEFORE;";
+
+        self.db.query(sql).bind(("category", category_id)).await?;
+
+        Ok(())
+    }
+
     pub async fn get_expenses_overview(
         &self,
         user_id: RecordId,
