@@ -9,10 +9,11 @@ mod db;
 mod models;
 mod util;
 
-use std::net::SocketAddr;
+use std::{net::SocketAddr, path::PathBuf};
 
-use axum::{Router, routing::get};
+use axum::Router;
 use tokio::net::TcpListener;
+use tower_http::services::{ServeDir, ServeFile};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,8 +22,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     util::init_tracing();
 
     let app = Router::new()
-        .route("/", get(|| async { "Hello, World!" }))
-        .nest("/api", api::router().await?);
+        .nest("/api", api::router().await?)
+        .fallback_service(
+            ServeDir::new("public").fallback(ServeFile::new(PathBuf::from("public/index.html"))),
+        );
 
     let (addr, listener) = listener().await?;
 
