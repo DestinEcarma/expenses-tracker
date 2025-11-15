@@ -11,7 +11,12 @@ function loadIcon(name: string) {
 				return { default: iconCache.get(name) as IconType };
 			}
 
-			const Component = module[name] as IconType;
+			const Component = module[name] as IconType | undefined;
+
+			if (!Component) {
+				console.error(`Icon "${name}" does not exist in react-icons/fa`);
+				return { default: module["FaExclamationTriangle"] };
+			}
 
 			iconCache.set(name, Component);
 
@@ -42,18 +47,16 @@ function Icon({ name, defaultIcon: DefaultIcon }: { name: string; defaultIcon?: 
 		return <CachedComponent />;
 	}
 
-	const Component = name ? loadIcon(name) : null;
+	const Component = loadIcon(name);
 
 	if (!Component) {
 		return <>{DefaultIcon ? <DefaultIcon /> : null}</>;
 	}
 
 	return (
-		<div>
-			<Suspense fallback={<Spinner />}>
-				<Component />
-			</Suspense>
-		</div>
+		<Suspense fallback={<Spinner />}>
+			<Component />
+		</Suspense>
 	);
 }
 
