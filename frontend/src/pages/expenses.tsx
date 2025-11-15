@@ -81,20 +81,13 @@ export default () => {
 
 	const expenses = useMemo(() => fillMonth(data?.dailyExpense ?? [], month), [data?.dailyExpense, month]);
 	const categories = useList<Category>();
-
-	const sortedCategories = useMemo(
-		() => (data?.categories ?? []).sort((a, b) => b.amount - a.amount),
-		[data?.categories],
-	);
+	const setCategories = categories[1].set;
 
 	useEffect(() => {
-		categories[1].set(sortedCategories);
-	}, [categories, sortedCategories]);
+		setCategories((data?.categories ?? []).sort((a, b) => b.amount - a.amount));
+	}, [data?.categories, setCategories]);
 
-	const total = useMemo(
-		() => data?.dailyExpense?.reduce((acc, category) => acc + category.amount, 0) || 0,
-		[data?.dailyExpense],
-	);
+	const total = useMemo(() => categories[0].reduce((acc, category) => acc + category.amount, 0) || 0, [categories]);
 
 	useEffect(() => {
 		if (error) {
