@@ -55,20 +55,18 @@ const normalizeError = async (error: AxiosError<ApiError>): Promise<ApiError | u
 		throw {
 			title: "Network Error",
 			details: description,
-			status: 500,
+			status: error.status ?? 500,
 		};
 	}
 
-	if (error.response?.data) {
+	if (error.response.data) {
 		throw error.response.data;
 	}
 
-	const description = error.message || "Request failed.";
-
 	throw {
 		title: "Error",
-		details: description,
-		status: 500,
+		details: error.message ?? "Request failed.",
+		status: error.response.status ?? 500,
 	};
 };
 
