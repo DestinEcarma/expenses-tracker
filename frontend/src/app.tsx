@@ -27,13 +27,14 @@ function App() {
 					<QueryClientProvider client={queryClient}>
 						<AuthProvider>
 							<Routes>
-								<Route path="/" element={<WorkInProgress />} />
+								<Route path="/" element={<Expenses />} />
 								<Route path="/sign-in" element={<SignIn />} />
 								<Route path="/sign-up" element={<SignUp />} />
 								<Route path="/forgot-password" element={<WorkInProgress />} />
 								<Route path="/profile" element={<ProtectedPage />} />
 								<Route path="/expenses" element={<Expenses />} />
 								<Route path="/loading" element={<Loading />} />
+								<Route path="*" element={<WorkInProgress />} />
 							</Routes>
 						</AuthProvider>
 					</QueryClientProvider>
