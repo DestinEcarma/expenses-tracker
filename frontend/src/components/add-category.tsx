@@ -116,7 +116,9 @@ function AddCategory({ onAdd }: { onAdd?: (category: Category) => void }) {
 						<UI.Footer>
 							{!isDesktop && addButton}
 							<UI.Close asChild>
-								<Button variant="outline">Cancel</Button>
+								<Button variant="outline" onClick={() => form.reset()}>
+									Cancel
+								</Button>
 							</UI.Close>
 							{isDesktop && addButton}
 						</UI.Footer>
