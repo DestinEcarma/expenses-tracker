@@ -1,17 +1,20 @@
 import { AddCategory } from "@/components/add-category";
-import { Category as CategoryComp } from "@/components/category";
-import { Icon } from "@/components/icon";
+import { Category } from "@/components/category";
 import { ChartContainer } from "@/components/ui/chart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatMonth } from "@/lib/utils";
 import type { ApiError } from "@/services";
-import { type Expense, getExpensesOverview, type ExpenseOverview, type Category } from "@/services/expenses";
+import {
+	type Expense,
+	getExpensesOverview,
+	type ExpenseOverview,
+	type Category as ICategory,
+} from "@/services/expenses";
 import "@/styles/category-colors.css";
 import { useQuery } from "@tanstack/react-query";
 import { useList } from "@uidotdev/usehooks";
 import { addDays, endOfMonth, formatISO, startOfMonth } from "date-fns";
 import { useEffect, useMemo } from "react";
-import { FaExclamation } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Area, AreaChart } from "recharts";
 import { toast } from "sonner";
@@ -80,7 +83,7 @@ export default () => {
 	});
 
 	const expenses = useMemo(() => fillMonth(data?.dailyExpense ?? [], month), [data?.dailyExpense, month]);
-	const categories = useList<Category>();
+	const categories = useList<ICategory>();
 	const setCategories = categories[1].set;
 
 	useEffect(() => {
@@ -102,7 +105,7 @@ export default () => {
 	}, [error, navigate]);
 
 	return (
-		<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden py-4">
+		<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">
 			<h1 className="mb-4 text-center font-bold">Expenses</h1>
 			<div className="relative">
 				<div className="relative mx-auto mb-10 w-min">
@@ -130,17 +133,16 @@ export default () => {
 
 			<div className="min-h-0">
 				<ScrollArea className="h-full">
-					<div className="flex flex-col gap-4 p-4">
-						{categories[0].map(({ id, name, icon, amount, transactions }, index) => {
+					<div className="flex flex-col gap-4 px-4 py-4">
+						{categories[0].map((props, index) => {
 							return (
-								<CategoryComp
-									key={id}
-									name={name}
-									icon={<Icon name={icon} defaultIcon={FaExclamation} />}
+								<Category
+									key={props.id}
 									color={defaultColors[index % defaultColors.length]}
-									amount={amount}
-									progress={(amount / (total || 1)) * 100}
-									transactions={transactions}
+									progress={(props.amount / (total || 1)) * 100}
+									onSave={(updated) => categories[1].updateAt(index, { ...props, ...updated })}
+									onDelete={() => categories[1].removeAt(index)}
+									{...props}
 								/>
 							);
 						})}

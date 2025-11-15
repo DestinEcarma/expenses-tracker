@@ -13,6 +13,12 @@ interface Category {
 	transactions: number;
 }
 
+interface EditedCategory {
+	id: string;
+	name: string;
+	icon: string;
+}
+
 interface ExpensesOverview {
 	dailyExpense: Expense[];
 	categories: Category[];
@@ -22,8 +28,25 @@ async function addCategory(name: string, icon: string): Promise<Category> {
 	return api.post("/expenses/categories", { name, icon }).then((response) => response.data);
 }
 
+async function editCategory(id: string, name: string, icon: string): Promise<EditedCategory> {
+	return api.patch(`/expenses/categories/${id}/edit`, { name, icon }).then((response) => response.data);
+}
+
+async function deleteCategory(id: string): Promise<void> {
+	return api.delete(`/expenses/categories/${id}/delete`).then(() => undefined);
+}
+
 async function getExpensesOverview(start: Date, end: Date): Promise<ExpensesOverview> {
 	return api.get("/expenses", { params: { start, end } }).then((response) => response.data);
 }
 
-export { addCategory, getExpensesOverview, type Expense, type Category, type ExpensesOverview as ExpenseOverview };
+export {
+	addCategory,
+	editCategory,
+	deleteCategory,
+	getExpensesOverview,
+	type Expense,
+	type Category,
+	type EditedCategory,
+	type ExpensesOverview as ExpenseOverview,
+};
