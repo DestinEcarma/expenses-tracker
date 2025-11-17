@@ -33,7 +33,6 @@ function App() {
 								<Route path="/forgot-password" element={<WorkInProgress />} />
 								<Route path="/profile" element={<ProtectedPage />} />
 								<Route path="/expenses" element={<Expenses />} />
-								<Route path="/loading" element={<Loading />} />
 								<Route path="*" element={<WorkInProgress />} />
 							</Routes>
 						</AuthProvider>
