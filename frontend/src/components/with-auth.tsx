@@ -87,7 +87,7 @@ function withAuth<P extends object>(Wrapped: React.ComponentType<P>) {
 						</AlertDialogContent>
 					</AlertDialog>
 				</TopBarItem>
-				<Wrapped {...props} />;
+				<Wrapped {...props} />
 			</>
 		);
 	};
