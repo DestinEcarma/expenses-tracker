@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChartContainer } from "@/components/ui/chart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TopBarItem } from "@/contexts/use-top-bar";
-import { formatMonth } from "@/lib/utils";
+import { formatMonth, formatNumber } from "@/lib/utils";
 import type { ApiError } from "@/services";
 import { getTransactions, type Transaction as ITransaction } from "@/services/expenses";
 import { useQuery } from "@tanstack/react-query";
@@ -113,7 +113,9 @@ export default () => {
 				<div className="relative">
 					<div className="relative mx-auto mb-10 w-min">
 						<span className="text-muted-foreground self-start font-bold">{formatMonth(month)}</span>
-						<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">₱{total.toFixed(2)}</h2>
+						<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">
+							₱{formatNumber(total)}
+						</h2>
 					</div>
 					<ChartContainer config={{}} className="absolute top-0 -z-10 h-full w-full">
 						<AreaChart accessibilityLayer data={transactionsGrouped}>

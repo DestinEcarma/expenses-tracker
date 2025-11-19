@@ -2,13 +2,19 @@ import { isBrowser } from "./defs";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const formatter = new Intl.DateTimeFormat("en-US", { month: "long" });
+const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "long" });
+
+const numberFormatter = new Intl.NumberFormat("en-US", {
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2,
+	useGrouping: true,
+});
 
 function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-function parseSizeToPx(size: string): number {
+function parseSizeToPx(size: string) {
 	if (!isBrowser) {
 		return 0;
 	}
@@ -32,8 +38,12 @@ function parseSizeToPx(size: string): number {
 	return parseFloat(size);
 }
 
-function formatMonth(date: Date): string {
-	return formatter.format(date);
+function formatMonth(date: Date) {
+	return monthFormatter.format(date);
 }
 
-export { cn, parseSizeToPx, formatMonth };
+function formatNumber(number: number) {
+	return numberFormatter.format(number);
+}
+
+export { cn, parseSizeToPx, formatMonth, formatNumber };

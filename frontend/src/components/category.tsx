@@ -4,7 +4,7 @@ import { Icon } from "./icon";
 import { RippleButton } from "./ripple-button";
 import { Card, CardContent } from "./ui/card";
 import { useLongPress } from "@/hooks/use-long-press";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import type { EditedCategory, Category as ICategory } from "@/services/expenses";
 import { useState } from "react";
 import { FaExclamation } from "react-icons/fa";
@@ -58,7 +58,7 @@ function Category({ id, name, amount, transactions, progress, color, icon, onSav
 						<div className="flex w-full flex-col justify-center">
 							<div className="flex justify-between font-bold">
 								<span>{name}</span>
-								<span>₱{amount.toFixed(2)}</span>
+								<span>₱{formatNumber(amount)}</span>
 							</div>
 							<div className="text-muted-foreground flex justify-between text-sm">
 								<span>{transactions} transactions</span>

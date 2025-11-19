@@ -1,5 +1,5 @@
 import { Card, CardContent } from "./ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import type { Transaction as ITransaction } from "@/services/expenses";
 
 function Transaction({ amount, note, date }: ITransaction) {
@@ -15,7 +15,7 @@ function Transaction({ amount, note, date }: ITransaction) {
 					{date.toLocaleString("en-US", { day: "2-digit" })}
 				</div>
 				<div className="flex flex-col truncate">
-					<span className="font-bold">₱{amount.toFixed(2)}</span>
+					<span className="font-bold">₱{formatNumber(amount)}</span>
 					<p className="truncate text-left">{note || "..."}</p>
 				</div>
 			</CardContent>
