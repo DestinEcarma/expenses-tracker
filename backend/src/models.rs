@@ -27,14 +27,12 @@ pub struct Category {
 }
 
 #[derive(Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct Transaction {
     #[serde(serialize_with = "serialize_record_id")]
     pub id: RecordId,
     pub amount: f64,
     pub note: Option<String>,
-    pub created_at: Datetime,
-    pub updated_at: Datetime,
+    pub date: Datetime,
 }
 
 #[derive(Deserialize, Serialize)]

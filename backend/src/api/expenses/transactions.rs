@@ -7,7 +7,7 @@ use axum::{
     response::IntoResponse,
 };
 use serde::Deserialize;
-use surrealdb::RecordId;
+use surrealdb::{Datetime, RecordId};
 
 use crate::{
     api::{ApiError, ApiState, auth::extractor::AuthUser, defs::DateRange},
@@ -15,12 +15,14 @@ use crate::{
         DbError,
         repo::{CategoryRepo, transaction_repo::TransactionRepo},
     },
+    models::Transaction,
 };
 
 #[derive(Deserialize)]
 pub struct CreateItemPayload {
     pub amount: f64,
     pub note: Option<String>,
+    pub date: Datetime,
 }
 
 pub async fn create(
@@ -43,23 +45,49 @@ pub async fn create(
         )));
     }
 
-    transaction_repo
-        .create(category_id, payload.amount, payload.note)
+    let transaction_id = transaction_repo
+        .create(
+            category_id,
+            payload.amount,
+            payload.note.clone(),
+            payload.date.clone(),
+        )
         .await?;
 
-    Ok(StatusCode::CREATED)
+    Ok((
+        StatusCode::CREATED,
+        Json(Transaction {
+            id: transaction_id,
+            amount: payload.amount,
+            note: payload.note,
+            date: payload.date,
+        }),
+    ))
 }
 
 pub async fn list(
     State(state): State<Arc<ApiState>>,
     Path(category_id): Path<String>,
     Query(range): Query<DateRange>,
+    auth: AuthUser,
 ) -> Result<impl IntoResponse, ApiError> {
-    let repo = TransactionRepo::new(&state.db);
+    let category_repo = CategoryRepo::new(&state.db);
+    let transaction_repo = TransactionRepo::new(&state.db);
 
     let category_id = RecordId::from_table_key("category", category_id);
 
-    let transactions = repo.list(category_id, range.start, range.end).await?;
+    if !(category_repo
+        .user_owns(auth.user_id, category_id.clone())
+        .await?)
+    {
+        return Err(ApiError::Db(DbError::NotFound(
+            "User does not own this category".into(),
+        )));
+    }
+
+    let transactions = transaction_repo
+        .list(category_id, range.start, range.end)
+        .await?;
 
     Ok(Json(transactions))
 }

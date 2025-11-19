@@ -19,14 +19,16 @@ impl<'a> TransactionRepo<'a> {
         category_id: RecordId,
         amount: f64,
         note: Option<String>,
+        date: Datetime,
     ) -> Result<RecordId, DbError> {
-        let sql = "fn::add_transation($category, $amount, $note);";
+        let sql = "fn::add_transation($category, $amount, $note, $date);";
 
         self.db
             .query(sql)
             .bind(("category", category_id))
             .bind(("amount", amount))
             .bind(("note", note))
+            .bind(("date", date))
             .await?
             .take::<Option<_>>(0)?
             .ok_or(DbError::NotCreated("transaction".into()))
@@ -40,10 +42,12 @@ impl<'a> TransactionRepo<'a> {
     ) -> Result<Vec<Transaction>, DbError> {
         let sql = r#"
         SELECT
+            id,
             amount,
-            note
+            note,
+            date
         FROM $category<-user_category->category_transaction.out
-        WHERE created_at IN $start..=$end
+        WHERE date IN $start..=$end
         "#;
 
         Ok(self

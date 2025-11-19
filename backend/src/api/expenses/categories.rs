@@ -72,15 +72,18 @@ pub async fn edit(
     let name = payload.name;
     let icon = payload.icon;
 
-    if repo.exists(user_id.clone(), name.clone()).await? {
-        return Err(ApiError::AlreadyExists(json!(
-            {"name": "Category with this name already exists"}
-        )));
-    }
-
     if !(repo.user_owns(user_id.clone(), category_id.clone()).await?) {
         return Err(ApiError::Db(DbError::NotFound(
             "User does not own this category".into(),
+        )));
+    }
+
+    if repo
+        .exists_excluding(user_id.clone(), name.clone(), category_id.clone())
+        .await?
+    {
+        return Err(ApiError::AlreadyExists(json!(
+            {"name": "Category with this name already exists"}
         )));
     }
 

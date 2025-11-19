@@ -36,6 +36,35 @@ impl<'a> CategoryRepo<'a> {
             })))
     }
 
+    pub async fn exists_excluding(
+        &self,
+        user_id: RecordId,
+        name: String,
+        exclude_id: RecordId,
+    ) -> Result<bool, DbError> {
+        let sql = r#"
+        (
+            SELECT VALUE id
+            FROM ONLY $user->user_category.out
+            WHERE
+                string::lowercase(name) = string::lowercase($name)
+                AND id != $exclude
+            LIMIT 1
+        ) != NONE;
+        "#;
+
+        self.db
+            .query(sql)
+            .bind(("user", user_id))
+            .bind(("name", name))
+            .bind(("exclude", exclude_id))
+            .await?
+            .take::<Option<_>>(0)?
+            .ok_or(DbError::Unknown(json!({
+                "result": "Expected boolean got None"
+            })))
+    }
+
     pub async fn user_owns(
         &self,
         user_id: RecordId,
@@ -122,7 +151,7 @@ impl<'a> CategoryRepo<'a> {
     ) -> Result<ExpensesOverview, DbError> {
         let sql = r#"
         SELECT
-            time::format(created_at, "%Y-%m-%d") AS date,
+            time::format(date, "%Y-%m-%d") AS date,
             math::sum(amount) AS amount
         FROM $user->user_category->category_transaction.out
         WHERE created_at IN $start..=$end
