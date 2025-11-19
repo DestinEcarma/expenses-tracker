@@ -45,7 +45,7 @@ function fillMonth(data: Expense[], month: Date): Expense[] {
 	const start = startOfMonth(month);
 	const days = endOfMonth(month).getDate();
 
-	const lastDateOnData = new Date(data[data.length - 1]?.date ?? 0);
+	const lastDateOnData = data.length > 0 ? new Date(data[data.length - 1]?.date ?? 0) : new Date();
 
 	const byDate = new Map(data.map((item) => [item.date, item]));
 
@@ -76,7 +76,7 @@ export default () => {
 		return [month, startOfMonth(month), endOfMonth(month)];
 	})();
 
-	const { data, error } = useQuery<ExpenseOverview, ApiError>({
+	const { data, refetch, error } = useQuery<ExpenseOverview, ApiError>({
 		queryKey: ["expense overview", { start: +start, end: +end }],
 		queryFn: () => getExpensesOverview(start, end),
 		retry: false,
@@ -143,7 +143,10 @@ export default () => {
 									color={defaultColors[index % defaultColors.length]}
 									progress={(props.amount / (total || 1)) * 100}
 									onSave={(updated) => categories[1].updateAt(index, { ...props, ...updated })}
-									onDelete={() => categories[1].removeAt(index)}
+									onDelete={() => {
+										refetch();
+										categories[1].removeAt(index);
+									}}
 									{...props}
 								/>
 							);
@@ -151,7 +154,11 @@ export default () => {
 					</div>
 				</ScrollArea>
 			</div>
-			<AddCategory onAdd={(category) => categories[1].push(category)} />
+			<AddCategory
+				onAdd={(category) => {
+					categories[1].push(category);
+				}}
+			/>
 		</div>
 	);
 };
