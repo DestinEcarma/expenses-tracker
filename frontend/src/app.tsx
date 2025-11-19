@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 const SignIn = lazy(() => import("@/pages/sign-in"));
 const SignUp = lazy(() => import("@/pages/sign-up"));
 const Expenses = withAuth(lazy(() => import("@/pages/expenses")));
+const Transactions = withAuth(lazy(() => import("@/pages/transactions")));
 const WorkInProgress = lazy(() => import("@/pages/wip"));
 
 const ProtectedPage = withAuth(WorkInProgress);
@@ -33,6 +34,7 @@ function App() {
 								<Route path="/forgot-password" element={<WorkInProgress />} />
 								<Route path="/profile" element={<ProtectedPage />} />
 								<Route path="/expenses" element={<Expenses />} />
+								<Route path="/expenses/:id" element={<Transactions />} />
 								<Route path="*" element={<WorkInProgress />} />
 							</Routes>
 						</AuthProvider>

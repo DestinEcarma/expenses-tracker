@@ -24,7 +24,11 @@ type OverlayUI = {
 	Container: React.ComponentType<React.PropsWithChildren<{ open?: boolean; onOpenChange?: (open: boolean) => void }>>;
 	Trigger: React.ComponentType<React.PropsWithChildren<{ asChild?: boolean }>>;
 	Content: React.ComponentType<
-		React.PropsWithChildren<{ onWheel?: (e: React.WheelEvent) => void; onTouchMove?: (e: React.TouchEvent) => void }>
+		React.PropsWithChildren<{
+			className?: string;
+			onWheel?: (e: React.WheelEvent) => void;
+			onTouchMove?: (e: React.TouchEvent) => void;
+		}>
 	>;
 	Header: React.ComponentType<React.PropsWithChildren>;
 	Title: React.ComponentType<React.PropsWithChildren>;

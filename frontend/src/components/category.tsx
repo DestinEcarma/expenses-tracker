@@ -25,7 +25,7 @@ function Category({ id, name, amount, transactions, progress, color, icon, onSav
 	const pct = Math.max(0, Math.min(100, progress));
 
 	const longPressAttrs = useLongPress(() => setOpenEdit(true), {
-		onClick: () => navigate(`/expenses/categories/${id}`),
+		onClick: () => navigate(`/expenses/${id}`),
 	});
 
 	const iconComp = <Icon name={icon} defaultIcon={FaExclamation} />;

@@ -1,7 +1,7 @@
 import { refresh, type AuthResponse } from "./auth";
 import { clearAuth, getAuth, setAuth } from "./auth-service";
 import type { Nullable } from "@/lib/defs";
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, type AxiosResponseTransformer, type InternalAxiosRequestConfig } from "axios";
 
 interface ApiError<T = unknown> {
 	title: string;
@@ -17,8 +17,41 @@ type OnRefreshedReject = (error: ApiError) => void;
 const BASE_URL = "/api";
 const TIMEOUT_MS = 10_000;
 
-const apiAuthLess = axios.create({ baseURL: BASE_URL, timeout: TIMEOUT_MS });
-const api = axios.create({ baseURL: BASE_URL, timeout: TIMEOUT_MS });
+const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+
+const reviveDates = (value: unknown): unknown => {
+	if (typeof value === "string" && ISO_8601.test(value)) return new Date(value);
+	if (Array.isArray(value)) return value.map(reviveDates);
+
+	if (value && typeof value === "object") {
+		const out: Record<string, unknown> = {};
+
+		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+			out[k] = reviveDates(v);
+		}
+
+		return out;
+	}
+
+	return value;
+};
+
+const apiAuthLess = axios.create({
+	baseURL: BASE_URL,
+	timeout: TIMEOUT_MS,
+	transformResponse: [
+		...(axios.defaults.transformResponse as AxiosResponseTransformer[]),
+		(data) => reviveDates(data),
+	],
+});
+const api = axios.create({
+	baseURL: BASE_URL,
+	timeout: TIMEOUT_MS,
+	transformResponse: [
+		...(axios.defaults.transformResponse as AxiosResponseTransformer[]),
+		(data) => reviveDates(data),
+	],
+});
 
 let isRefreshing = false;
 let subscribers: Array<[OnRefreshedResolve, OnRefreshedReject]> = [];
