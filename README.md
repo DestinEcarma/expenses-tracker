@@ -8,7 +8,6 @@ Expenses Tracker is a web application designed to help users manage their expens
   - Rust: A fast and reliable programming language.
   - Axum: A web framework built with Tokio and Tower.
   - SurrealDB: A high-performance database for storing data.
-  - Shuttle: A deployment tool for seamless deployment of Rust applications.
 
 - Frontend
   - React: A popular JavaScript library for building user interfaces.
