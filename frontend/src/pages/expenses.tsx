@@ -86,11 +86,11 @@ export default () => {
 	const categories = useList<ICategory>();
 	const setCategories = categories[1].set;
 
+	const total = useMemo(() => categories[0].reduce((acc, category) => acc + category.amount, 0) || 0, [categories]);
+
 	useEffect(() => {
 		setCategories((data?.categories ?? []).sort((a, b) => b.amount - a.amount));
 	}, [data?.categories, setCategories]);
-
-	const total = useMemo(() => categories[0].reduce((acc, category) => acc + category.amount, 0) || 0, [categories]);
 
 	useEffect(() => {
 		if (error) {

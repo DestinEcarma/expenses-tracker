@@ -58,7 +58,7 @@ function Category({ id, name, amount, transactions, progress, color, icon, onSav
 						<div className="flex w-full flex-col justify-center">
 							<div className="flex justify-between font-bold">
 								<span>{name}</span>
-								<span>₱{amount}</span>
+								<span>₱{amount.toFixed(2)}</span>
 							</div>
 							<div className="text-muted-foreground flex justify-between text-sm">
 								<span>{transactions} transactions</span>

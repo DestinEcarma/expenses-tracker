@@ -18,18 +18,12 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-	email: z.email({ message: "Please enter a valid email address" }),
+	email: z.email("Please enter a valid email address"),
 	username: z
 		.string()
-		.min(3, {
-			message: "Username must be at least 3 characters",
-		})
-		.regex(/^[a-zA-Z0-9_]+$/, {
-			message: "Username can only contain letters, numbers, and underscores",
-		}),
-	password: z.string().min(8, {
-		message: "Password must be at least 8 characters",
-	}),
+		.min(3, "Username must be at least 3 characters")
+		.regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 type FormValues = z.infer<typeof FormSchema>;

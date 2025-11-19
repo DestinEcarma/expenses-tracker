@@ -18,12 +18,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-	name: z
-		.string()
-		.trim()
-		.nonempty({ message: "Please enter a category name" })
-		.max(16, { message: "Name must be at most 16 characters" }),
-	icon: z.string().trim().min(1, { message: "Please select an icon" }),
+	name: z.string().trim().nonempty("Please enter a category name").max(16, "Name must be at most 16 characters"),
+	icon: z.string().trim().nonempty("Please select an icon"),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -80,7 +76,7 @@ function AddCategory({ onAdd }: { onAdd?: (category: Category) => void }) {
 							<UI.Title>Add Category</UI.Title>
 							<UI.Description>Add a new category to track your expenses.</UI.Description>
 						</UI.Header>
-						<div className={cn(["py-8", !isDesktop ? "px-4" : ""])}>
+						<div className={cn(["py-8", !isDesktop && "px-4"])}>
 							<FormField
 								control={form.control}
 								name="name"

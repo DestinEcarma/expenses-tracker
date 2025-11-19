@@ -4,7 +4,7 @@ import type { IconBaseProps, IconType } from "react-icons/lib";
 
 const iconCache = new Map<string, IconType>();
 
-function loadIcon(name: string) {
+function loadIcon(name: string, DefaultIcon?: React.FC) {
 	return lazy(() =>
 		import("react-icons/fa").then((module) => {
 			if (iconCache.has(name)) {
@@ -14,8 +14,7 @@ function loadIcon(name: string) {
 			const Component = module[name] as IconType | undefined;
 
 			if (!Component) {
-				console.error(`Icon "${name}" does not exist in react-icons/fa`);
-				return { default: module["FaExclamationTriangle"] };
+				return { default: DefaultIcon || module["FaExclamationTriangle"] };
 			}
 
 			iconCache.set(name, Component);
@@ -47,11 +46,7 @@ function Icon({ name, defaultIcon: DefaultIcon }: { name: string; defaultIcon?: 
 		return <CachedComponent />;
 	}
 
-	const Component = loadIcon(name);
-
-	if (!Component) {
-		return <>{DefaultIcon ? <DefaultIcon /> : null}</>;
-	}
+	const Component = loadIcon(name, DefaultIcon);
 
 	return (
 		<Suspense fallback={<Spinner />}>

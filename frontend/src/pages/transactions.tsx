@@ -72,6 +72,20 @@ export default () => {
 		retry: false,
 	});
 
+	const transactions = useList<ITransaction>();
+	const sortedTransactions = useMemo(
+		() => transactions[0].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+		[transactions],
+	);
+	const setTransactions = transactions[1].set;
+
+	const transactionsGrouped = useMemo(() => fillMonth(transactions[0], month), [transactions, month]);
+	const total = useMemo(() => transactions[0].reduce((acc, category) => acc + category.amount, 0) || 0, [transactions]);
+
+	useEffect(() => {
+		setTransactions((data ?? []).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+	}, [data, setTransactions]);
+
 	useEffect(() => {
 		if (error) {
 			toast.error(`${error.status} ${error.title}`, {
@@ -83,20 +97,6 @@ export default () => {
 			}
 		}
 	}, [error, navigate]);
-
-	const transactions = useList<ITransaction>();
-	const sortedTransactions = useMemo(
-		() => transactions[0].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-		[transactions],
-	);
-	const setTransactions = transactions[1].set;
-
-	useEffect(() => {
-		setTransactions((data ?? []).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-	}, [data, setTransactions]);
-
-	const transactionsGrouped = useMemo(() => fillMonth(transactions[0], month), [transactions, month]);
-	const total = useMemo(() => transactions[0].reduce((acc, category) => acc + category.amount, 0) || 0, [transactions]);
 
 	return (
 		<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">

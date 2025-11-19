@@ -34,6 +34,7 @@ function RippleButton({
 	const [ripples, setRipples] = useState<Ripple[]>([]);
 	const [active, setActive] = useState(false);
 	const buttonRef = useRef<HTMLButtonElement>(null);
+
 	useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
 
 	const createRipple = useCallback(

@@ -31,10 +31,10 @@ function useIconSelector() {
 	}, []);
 
 	const filteredIcons = useMemo(() => {
-		return icons.filter(({ name }) => {
+		return icons.filter(({ friendlyName }) => {
 			if (search === "" || search.length < 3) {
 				return true;
-			} else if (name.toLowerCase().includes(search.toLowerCase())) {
+			} else if (friendlyName.toLowerCase().includes(search.toLowerCase())) {
 				return true;
 			} else {
 				return false;

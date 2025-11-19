@@ -20,8 +20,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-	username: z.string().trim().min(1, { message: "Username is required" }),
-	password: z.string().trim().min(1, { message: "Password is required" }),
+	username: z.string().trim().nonempty("Username is required"),
+	password: z.string().trim().nonempty("Password is required"),
 	remember: z.boolean().optional(),
 });
 
