@@ -1,3 +1,4 @@
+import { TopBarItem, TopBarProvider } from "./contexts/use-top-bar";
 import { Loading } from "@/components/loading";
 import { ThemeMenu } from "@/components/theme-toggle";
 import { withAuth } from "@/components/with-auth";
@@ -20,27 +21,29 @@ const queryClient = new QueryClient();
 function App() {
 	return (
 		<BrowserRouter>
-			<ThemeProvider>
-				<div className="absolute top-4 right-4">
-					<ThemeMenu />
-				</div>
-				<Suspense fallback={<Loading />}>
-					<QueryClientProvider client={queryClient}>
-						<AuthProvider>
-							<Routes>
-								<Route path="/" element={<Expenses />} />
-								<Route path="/sign-in" element={<SignIn />} />
-								<Route path="/sign-up" element={<SignUp />} />
-								<Route path="/forgot-password" element={<WorkInProgress />} />
-								<Route path="/profile" element={<ProtectedPage />} />
-								<Route path="/expenses" element={<Expenses />} />
-								<Route path="/expenses/:id" element={<Transactions />} />
-								<Route path="*" element={<WorkInProgress />} />
-							</Routes>
-						</AuthProvider>
-					</QueryClientProvider>
-				</Suspense>
-			</ThemeProvider>
+			<TopBarProvider>
+				<ThemeProvider>
+					<Suspense fallback={<Loading />}>
+						<QueryClientProvider client={queryClient}>
+							<AuthProvider>
+								<TopBarItem side="right" id="theme-menu">
+									<ThemeMenu />
+								</TopBarItem>
+								<Routes>
+									<Route path="/" element={<Expenses />} />
+									<Route path="/sign-in" element={<SignIn />} />
+									<Route path="/sign-up" element={<SignUp />} />
+									<Route path="/forgot-password" element={<WorkInProgress />} />
+									<Route path="/profile" element={<ProtectedPage />} />
+									<Route path="/expenses" element={<Expenses />} />
+									<Route path="/expenses/:id" element={<Transactions />} />
+									<Route path="*" element={<WorkInProgress />} />
+								</Routes>
+							</AuthProvider>
+						</QueryClientProvider>
+					</Suspense>
+				</ThemeProvider>
+			</TopBarProvider>
 		</BrowserRouter>
 	);
 }
