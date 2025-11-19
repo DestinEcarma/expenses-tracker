@@ -21,8 +21,8 @@ const queryClient = new QueryClient();
 function App() {
 	return (
 		<BrowserRouter>
-			<TopBarProvider>
-				<ThemeProvider>
+			<ThemeProvider>
+				<TopBarProvider>
 					<Suspense fallback={<Loading />}>
 						<QueryClientProvider client={queryClient}>
 							<AuthProvider>
@@ -42,8 +42,8 @@ function App() {
 							</AuthProvider>
 						</QueryClientProvider>
 					</Suspense>
-				</ThemeProvider>
-			</TopBarProvider>
+				</TopBarProvider>
+			</ThemeProvider>
 		</BrowserRouter>
 	);
 }
