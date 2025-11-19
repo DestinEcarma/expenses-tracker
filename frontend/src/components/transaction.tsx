@@ -1,9 +1,6 @@
-import { DialogUI, DrawerUI } from "./responsive-overlay";
-import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
 import type { Transaction as ITransaction } from "@/services/expenses";
-import { useMediaQuery } from "@uidotdev/usehooks";
 
 function Transaction({ amount, note, date }: ITransaction) {
 	return (

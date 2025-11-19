@@ -1,7 +1,6 @@
-import { DialogUI, DrawerUI, PopoverUI } from "./responsive-overlay";
+import { DialogUI, PopoverUI } from "./responsive-overlay";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@uidotdev/usehooks";
