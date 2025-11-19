@@ -13,8 +13,8 @@ LET $category = (CREATE ONLY category SET name = $name, icon = $icon);
 RELATE $user -> user_category -> ($category);
 RETURN $category.id;
 } COMMENT '' PERMISSIONS FULL;
-DEFINE FUNCTION fn::add_transation($category: record<category>, $amount: float, $note: option<string>) -> record<transaction> {
-LET $transaction = (CREATE ONLY transaction SET amount = $amount, note = $note);
+DEFINE FUNCTION fn::add_transation($category: record<category>, $amount: float, $note: option<string>, $date: datetime) -> record<transaction> {
+LET $transaction = (CREATE ONLY transaction SET amount = $amount, note = $note, date = $date);
 RELATE ($category<-user_category) -> category_transaction -> ($transaction);
 RETURN $transaction.id;
 } COMMENT '' PERMISSIONS FULL;
@@ -55,6 +55,7 @@ DEFINE TABLE transaction TYPE NORMAL SCHEMAFULL PERMISSIONS NONE;
 
 DEFINE FIELD amount ON transaction TYPE float PERMISSIONS FULL;
 DEFINE FIELD created_at ON transaction TYPE datetime DEFAULT time::now() VALUE $value OR time::now() PERMISSIONS FULL;
+DEFINE FIELD date ON transaction TYPE datetime PERMISSIONS FULL;
 DEFINE FIELD note ON transaction TYPE option<string> PERMISSIONS FULL;
 DEFINE FIELD updated_at ON transaction TYPE datetime DEFAULT time::now() VALUE time::now() PERMISSIONS FULL;
 
