@@ -1,7 +1,9 @@
 import { AddTransaction } from "@/components/add-transaction";
 import { Transaction } from "@/components/transaction";
+import { Button } from "@/components/ui/button";
 import { ChartContainer } from "@/components/ui/chart";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TopBarItem } from "@/contexts/use-top-bar";
 import { formatMonth } from "@/lib/utils";
 import type { ApiError } from "@/services";
 import { getTransactions, type Transaction as ITransaction } from "@/services/expenses";
@@ -9,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useList } from "@uidotdev/usehooks";
 import { addDays, endOfMonth, formatISO, startOfMonth } from "date-fns";
 import { useEffect, useMemo } from "react";
+import { TiArrowBack } from "react-icons/ti";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Area, AreaChart } from "recharts";
 import { toast } from "sonner";
@@ -99,42 +102,48 @@ export default () => {
 	}, [error, navigate]);
 
 	return (
-		<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">
-			<h1 className="mb-4 text-center font-bold">Transactions</h1>
-			<div className="relative">
-				<div className="relative mx-auto mb-10 w-min">
-					<span className="text-muted-foreground self-start font-bold">{formatMonth(month)}</span>
-					<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">₱{total.toFixed(2)}</h2>
-				</div>
-				<ChartContainer config={{}} className="absolute top-0 -z-10 h-full w-full">
-					<AreaChart accessibilityLayer data={transactionsGrouped}>
-						<defs>
-							<linearGradient id="amount" x1="0" y1="0" x2="0" y2="1">
-								<stop offset="0%" stopColor="var(--accent-foreground)" stopOpacity={0.25} />
-								<stop offset="50%" stopColor="var(--accent-foreground)" stopOpacity={0} />
-							</linearGradient>
-						</defs>
-						<Area
-							dataKey="amount"
-							fill="url(#amount)"
-							type="basis"
-							strokeWidth={2}
-							className="stroke-accent-foreground"
-						/>
-					</AreaChart>
-				</ChartContainer>
-			</div>
-
-			<div className="min-h-0">
-				<ScrollArea className="h-full">
-					<div className="flex w-full flex-col gap-4 p-4">
-						{sortedTransactions.map((props) => (
-							<Transaction key={props.id} {...props} />
-						))}
+		<>
+			<TopBarItem side="left" id="back-button">
+				<Button variant="outline" size="icon" onClick={() => navigate(-1)}>
+					<TiArrowBack />
+				</Button>
+			</TopBarItem>
+			<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">
+				<h1 className="mb-4 text-center font-bold">Transactions</h1>
+				<div className="relative">
+					<div className="relative mx-auto mb-10 w-min">
+						<span className="text-muted-foreground self-start font-bold">{formatMonth(month)}</span>
+						<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">₱{total.toFixed(2)}</h2>
 					</div>
-				</ScrollArea>
+					<ChartContainer config={{}} className="absolute top-0 -z-10 h-full w-full">
+						<AreaChart accessibilityLayer data={transactionsGrouped}>
+							<defs>
+								<linearGradient id="amount" x1="0" y1="0" x2="0" y2="1">
+									<stop offset="0%" stopColor="var(--accent-foreground)" stopOpacity={0.25} />
+									<stop offset="50%" stopColor="var(--accent-foreground)" stopOpacity={0} />
+								</linearGradient>
+							</defs>
+							<Area
+								dataKey="amount"
+								fill="url(#amount)"
+								type="basis"
+								strokeWidth={2}
+								className="stroke-accent-foreground"
+							/>
+						</AreaChart>
+					</ChartContainer>
+				</div>
+				<div className="min-h-0">
+					<ScrollArea className="h-full">
+						<div className="flex w-full flex-col gap-4 p-4">
+							{sortedTransactions.map((props) => (
+								<Transaction key={props.id} {...props} />
+							))}
+						</div>
+					</ScrollArea>
+				</div>
+				{id && <AddTransaction id={id} onAdd={(transaction) => transactions[1].push(transaction)} />}
 			</div>
-			{id && <AddTransaction id={id} onAdd={(transaction) => transactions[1].push(transaction)} />}
-		</div>
+		</>
 	);
 };
