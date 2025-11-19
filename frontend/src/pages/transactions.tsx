@@ -104,7 +104,7 @@ export default () => {
 	return (
 		<>
 			<TopBarItem side="left" id="back-button">
-				<Button variant="outline" size="icon" onClick={() => navigate(-1)}>
+				<Button variant="outline" size="icon" onClick={() => (navigate.length > 1 ? navigate(-1) : navigate("/"))}>
 					<TiArrowBack />
 				</Button>
 			</TopBarItem>
