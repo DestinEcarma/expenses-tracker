@@ -147,20 +147,22 @@ impl<'a> CategoryRepo<'a> {
         GROUP BY date
         ORDER BY date NUMERIC;
         SELECT
-            id,
-            name,
-            icon,
-            count((
-                SELECT VALUE id
-                FROM <-user_category->category_transaction.out
-                WHERE created_at IN $start..=$end
-            )) AS transactions,
-            math::sum((
-                SELECT VALUE amount
-                FROM <-user_category->category_transaction.out
-                WHERE created_at IN $start..=$end
-            )) AS amount
-        FROM $user->user_category.out;
+            *,
+            count(raw_transactions) AS transactions,
+            math::sum(raw_transactions) AS amount
+        OMIT raw_transactions
+        FROM (
+            SELECT
+                id,
+                name,
+                icon,
+                (
+                    SELECT VALUE amount
+                    FROM <-user_category->category_transaction.out
+                    WHERE date IN $start..=$end
+                ) AS raw_transactions
+            FROM $user->user_category.out
+        );
         "#;
 
         let mut res = self
