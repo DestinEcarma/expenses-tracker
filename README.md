@@ -16,7 +16,7 @@ Expenses Tracker is a web application designed to help users manage their expens
 
 ## SurrealDB Schema
 
-To configure SurrealDB schema simply go to this link: https://app.surrealdb.com
+To configure SurrealDB schema simply go to this link: https://app.surrealdb.com or use `surreal sql ...`
 
 ## License
 
