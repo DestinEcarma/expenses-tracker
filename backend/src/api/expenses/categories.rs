@@ -87,8 +87,7 @@ pub async fn edit(
         )));
     }
 
-    repo.edit(user_id, category_id, name.clone(), icon.clone())
-        .await?;
+    repo.edit(category_id, name.clone(), icon.clone()).await?;
 
     Ok((StatusCode::OK, Json(EditedCategory { name, icon })))
 }

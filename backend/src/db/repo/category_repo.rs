@@ -108,26 +108,12 @@ impl<'a> CategoryRepo<'a> {
             .ok_or(DbError::NotCreated("category".into()))
     }
 
-    pub async fn edit(
-        &self,
-        user_id: RecordId,
-        category_id: RecordId,
-        name: String,
-        icon: String,
-    ) -> Result<(), DbError> {
-        let sql = r#"
-        UPDATE ONLY (
-            SELECT VALUE id
-            FROM ONLY $user->user_category.out
-            WHERE id = $category
-            LIMIT 1
-        ) SET name = $name, icon = $icon;
-        "#;
+    pub async fn edit(&self, id: RecordId, name: String, icon: String) -> Result<(), DbError> {
+        let sql = "UPDATE ONLY $category SET name = $name, icon = $icon;";
 
         self.db
             .query(sql)
-            .bind(("user", user_id))
-            .bind(("category", category_id))
+            .bind(("category", id))
             .bind(("name", name))
             .bind(("icon", icon))
             .await?;
