@@ -53,6 +53,22 @@ async function addTransaction(id: string, amount: number, date: Date, note?: str
 		.then((response) => response.data);
 }
 
+async function editTransaction(
+	categoryId: string,
+	transactionId: string,
+	amount: number,
+	date: Date,
+	note?: string,
+): Promise<Transaction> {
+	return api
+		.patch(`/expenses/categories/${categoryId}/transactions/${transactionId}/edit`, { amount, date, note })
+		.then((response) => response.data);
+}
+
+async function deleteTransaction(categoryId: string, transactionId: string): Promise<void> {
+	return api.delete(`/expenses/categories/${categoryId}/transactions/${transactionId}/delete`).then(() => undefined);
+}
+
 async function getTransactions(id: string, start: Date, end: Date): Promise<Transaction[]> {
 	return api
 		.get(`/expenses/categories/${id}/transactions`, { params: { start, end } })
@@ -65,6 +81,8 @@ export {
 	deleteCategory,
 	getExpensesOverview,
 	addTransaction,
+	editTransaction,
+	deleteTransaction,
 	getTransactions,
 	type Expense,
 	type Category,

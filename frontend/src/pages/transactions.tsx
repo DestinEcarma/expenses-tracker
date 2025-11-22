@@ -138,8 +138,15 @@ export default () => {
 				<div className="min-h-0">
 					<ScrollArea className="h-full">
 						<div className="flex w-full flex-col gap-4 p-4">
-							{sortedTransactions.map((props) => (
-								<Transaction key={props.id} {...props} />
+							{sortedTransactions.map(({ id: transactionId, ...props }, index) => (
+								<Transaction
+									key={transactionId}
+									categoryId={id!}
+									transactionId={transactionId}
+									onSave={(updated) => transactions[1].updateAt(index, { ...props, ...updated })}
+									onDelete={() => transactions[1].removeAt(index)}
+									{...props}
+								/>
 							))}
 						</div>
 					</ScrollArea>
