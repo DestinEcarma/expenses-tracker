@@ -43,8 +43,7 @@ function fillMonth(data: Expense[], month: Date): Expense[] {
 	const start = startOfMonth(month);
 	const days = endOfMonth(month).getDate();
 
-	const lastDateOnData = data.length > 0 ? new Date(data[data.length - 1]?.date ?? 0) : new Date();
-
+	const now = new Date();
 	const byDate = new Map(data.map((item) => [item.date, item]));
 
 	return Array.from({ length: days }, (_, i) => {
@@ -55,7 +54,7 @@ function fillMonth(data: Expense[], month: Date): Expense[] {
 			return byDate.get(key) as Expense;
 		}
 
-		if (date < lastDateOnData) {
+		if (date < now) {
 			return { date: key, amount: 0 };
 		}
 

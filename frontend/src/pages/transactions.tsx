@@ -18,14 +18,7 @@ function fillMonth(data: ITransaction[], month: Date): { date: string; amount?: 
 	const start = startOfMonth(month);
 	const days = endOfMonth(month).getDate();
 
-	const lastDateOnData =
-		data.length > 0
-			? data.reduce((latest, transaction) => {
-					const transactionDate = new Date(transaction.date);
-					return transactionDate > latest ? transactionDate : latest;
-				}, new Date(0))
-			: new Date();
-
+	const now = new Date();
 	const byDate = new Map();
 
 	data.forEach((transaction) => {
@@ -46,7 +39,7 @@ function fillMonth(data: ITransaction[], month: Date): { date: string; amount?: 
 			return byDate.get(key)!;
 		}
 
-		if (date < lastDateOnData) {
+		if (date < now) {
 			return { date: key, amount: 0 };
 		}
 
@@ -136,7 +129,14 @@ export default () => {
 						</div>
 					</ScrollArea>
 				</div>
-				{id && <AddTransaction id={id} onAdd={(transaction) => transactions[1].push(transaction)} />}
+				{id && (
+					<AddTransaction
+						id={id}
+						onAdd={(transaction) =>
+							transaction.date > start && transaction.date < end && transactions[1].push(transaction)
+						}
+					/>
+				)}
 			</div>
 		</>
 	);
