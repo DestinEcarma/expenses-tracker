@@ -32,7 +32,7 @@ interface Transaction {
 }
 
 async function addCategory(name: string, icon: string): Promise<Category> {
-	return api.post("/expenses/categories", { name, icon }).then((response) => response.data);
+	return api.post("/expenses/categories/create", { name, icon }).then((response) => response.data);
 }
 
 async function editCategory(id: string, name: string, icon: string): Promise<EditedCategory> {
@@ -44,12 +44,12 @@ async function deleteCategory(id: string): Promise<void> {
 }
 
 async function getExpensesOverview(start: Date, end: Date): Promise<ExpensesOverview> {
-	return api.get("/expenses", { params: { start, end } }).then((response) => response.data);
+	return api.get("/expenses/overview", { params: { start, end } }).then((response) => response.data);
 }
 
 async function addTransaction(id: string, amount: number, date: Date, note?: string): Promise<Transaction> {
 	return api
-		.post(`/expenses/categories/${id}/transactions`, { amount, note, date })
+		.post(`/expenses/categories/${id}/transactions/create`, { amount, note, date })
 		.then((response) => response.data);
 }
 
@@ -71,7 +71,7 @@ async function deleteTransaction(categoryId: string, transactionId: string): Pro
 
 async function getTransactions(id: string, start: Date, end: Date): Promise<Transaction[]> {
 	return api
-		.get(`/expenses/categories/${id}/transactions`, { params: { start, end } })
+		.get(`/expenses/categories/${id}/transactions/list`, { params: { start, end } })
 		.then((response) => response.data);
 }
 
