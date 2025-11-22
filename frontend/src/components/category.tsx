@@ -8,7 +8,7 @@ import { cn, formatNumber } from "@/lib/utils";
 import type { EditedCategory, Category as ICategory } from "@/services/expenses";
 import { useState } from "react";
 import { FaExclamation } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface CategoryProps extends ICategory {
 	progress: number;
@@ -19,13 +19,18 @@ interface CategoryProps extends ICategory {
 
 function Category({ id, name, amount, transactions, progress, color, icon, onSave, onDelete }: CategoryProps) {
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const [openEdit, setOpenEdit] = useState(false);
 
 	const resolvedColor = `var(--category-${color ?? "red"})`;
 	const pct = Math.max(0, Math.min(100, progress));
 
 	const longPressAttrs = useLongPress(() => setOpenEdit(true), {
-		onClick: () => navigate(`/expenses/${id}`),
+		onClick: () =>
+			navigate({
+				pathname: `/expenses/${id}`,
+				search: searchParams.toString(),
+			}),
 	});
 
 	const iconComp = <Icon name={icon} defaultIcon={FaExclamation} />;

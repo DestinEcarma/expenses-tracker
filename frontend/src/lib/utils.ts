@@ -2,7 +2,7 @@ import { isBrowser } from "./defs";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "long" });
+const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short" });
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
 	minimumFractionDigits: 2,
@@ -39,7 +39,9 @@ function parseSizeToPx(size: string) {
 }
 
 function formatMonth(date: Date) {
-	return monthFormatter.format(date);
+	const year = date.getFullYear();
+
+	return monthFormatter.format(date) + (new Date().getFullYear() != year ? `, ${year.toString()}` : "");
 }
 
 function formatNumber(number: number) {

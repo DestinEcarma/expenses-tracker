@@ -1,10 +1,9 @@
 import { AddTransaction } from "@/components/add-transaction";
+import { TotalGraph } from "@/components/total-graph";
 import { Transaction } from "@/components/transaction";
 import { Button } from "@/components/ui/button";
-import { ChartContainer } from "@/components/ui/chart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TopBarItem } from "@/contexts/use-top-bar";
-import { formatMonth, formatNumber } from "@/lib/utils";
 import type { ApiError } from "@/services";
 import { getTransactions, type Transaction as ITransaction } from "@/services/expenses";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +12,6 @@ import { addDays, endOfMonth, formatISO, startOfMonth } from "date-fns";
 import { useEffect, useMemo } from "react";
 import { TiArrowBack } from "react-icons/ti";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Area, AreaChart } from "recharts";
 import { toast } from "sonner";
 
 function fillMonth(data: ITransaction[], month: Date): { date: string; amount?: number }[] {
@@ -63,7 +61,8 @@ export default () => {
 
 	const [month, start, end] = (() => {
 		const monthParams = searchParams.get("month");
-		const month = monthParams ? new Date(monthParams) : new Date();
+		const time = parseInt(monthParams ?? "");
+		const month = time ? new Date(time) : new Date();
 
 		return [month, startOfMonth(month), endOfMonth(month)];
 	})();
@@ -83,7 +82,6 @@ export default () => {
 	const setTransactions = transactions[1].set;
 
 	const transactionsGrouped = useMemo(() => fillMonth(transactions[0], month), [transactions, month]);
-	const total = useMemo(() => transactions[0].reduce((acc, category) => acc + category.amount, 0) || 0, [transactions]);
 
 	useEffect(() => {
 		setTransactions((data ?? []).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
@@ -104,37 +102,24 @@ export default () => {
 	return (
 		<>
 			<TopBarItem side="left" id="back-button">
-				<Button variant="outline" size="icon" onClick={() => (navigate.length > 1 ? navigate(-1) : navigate("/"))}>
+				<Button
+					variant="outline"
+					size="icon"
+					onClick={() =>
+						navigate.length > 1
+							? navigate(-1)
+							: navigate({
+									pathname: "/",
+									search: searchParams.toString(),
+								})
+					}
+				>
 					<TiArrowBack />
 				</Button>
 			</TopBarItem>
 			<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">
 				<h1 className="mb-4 text-center font-bold">Transactions</h1>
-				<div className="relative">
-					<div className="relative mx-auto mb-10 w-min">
-						<span className="text-muted-foreground self-start font-bold">{formatMonth(month)}</span>
-						<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">
-							₱{formatNumber(total)}
-						</h2>
-					</div>
-					<ChartContainer config={{}} className="absolute top-0 -z-10 h-full w-full">
-						<AreaChart accessibilityLayer data={transactionsGrouped}>
-							<defs>
-								<linearGradient id="amount" x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0%" stopColor="var(--accent-foreground)" stopOpacity={0.25} />
-									<stop offset="50%" stopColor="var(--accent-foreground)" stopOpacity={0} />
-								</linearGradient>
-							</defs>
-							<Area
-								dataKey="amount"
-								fill="url(#amount)"
-								type="basis"
-								strokeWidth={2}
-								className="stroke-accent-foreground"
-							/>
-						</AreaChart>
-					</ChartContainer>
-				</div>
+				<TotalGraph month={month} data={transactionsGrouped} />
 				<div className="min-h-0">
 					<ScrollArea className="h-full">
 						<div className="flex w-full flex-col gap-4 p-4">

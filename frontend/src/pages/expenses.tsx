@@ -1,8 +1,7 @@
 import { AddCategory } from "@/components/add-category";
 import { Category } from "@/components/category";
-import { ChartContainer } from "@/components/ui/chart";
+import { TotalGraph } from "@/components/total-graph";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatMonth, formatNumber } from "@/lib/utils";
 import type { ApiError } from "@/services";
 import {
 	type Expense,
@@ -16,7 +15,6 @@ import { useList } from "@uidotdev/usehooks";
 import { addDays, endOfMonth, formatISO, startOfMonth } from "date-fns";
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Area, AreaChart } from "recharts";
 import { toast } from "sonner";
 
 const defaultColors = [
@@ -69,12 +67,13 @@ export default () => {
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 
-	const [month, start, end] = (() => {
+	const [month, start, end] = useMemo(() => {
 		const monthParams = searchParams.get("month");
-		const month = monthParams ? new Date(monthParams) : new Date();
+		const time = parseInt(monthParams ?? "");
+		const month = time ? new Date(time) : new Date();
 
 		return [month, startOfMonth(month), endOfMonth(month)];
-	})();
+	}, [searchParams]);
 
 	const { data, refetch, error } = useQuery<ExpenseOverview, ApiError>({
 		queryKey: ["expense overview", { start: +start, end: +end }],
@@ -107,32 +106,7 @@ export default () => {
 	return (
 		<div className="mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden pt-4">
 			<h1 className="mb-4 text-center font-bold">Expenses</h1>
-			<div className="relative">
-				<div className="relative mx-auto mb-10 w-min">
-					<span className="text-muted-foreground self-start font-bold">{formatMonth(month)}</span>
-					<h2 className="dark:text-shadow-foreground/10 text-4xl leading-none text-shadow-lg">
-						₱{formatNumber(total)}
-					</h2>
-				</div>
-				<ChartContainer config={{}} className="absolute top-0 -z-10 h-full w-full">
-					<AreaChart accessibilityLayer data={expenses}>
-						<defs>
-							<linearGradient id="amount" x1="0" y1="0" x2="0" y2="1">
-								<stop offset="0%" stopColor="var(--accent-foreground)" stopOpacity={0.25} />
-								<stop offset="50%" stopColor="var(--accent-foreground)" stopOpacity={0} />
-							</linearGradient>
-						</defs>
-						<Area
-							dataKey="amount"
-							fill="url(#amount)"
-							type="basis"
-							strokeWidth={2}
-							className="stroke-accent-foreground"
-						/>
-					</AreaChart>
-				</ChartContainer>
-			</div>
-
+			<TotalGraph month={month} total={total} data={expenses} />
 			<div className="min-h-0">
 				<ScrollArea className="h-full">
 					<div className="flex flex-col gap-4 px-4 py-4">
