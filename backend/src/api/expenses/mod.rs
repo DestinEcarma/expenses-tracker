@@ -25,7 +25,7 @@ pub fn router(state: Arc<ApiState>) -> Router<Arc<ApiState>> {
         .route("/delete", delete(transactions::delete));
 
     Router::new()
-        .route("/overview", get(handlers::get_expenses_overview))
+        .route("/list-overview", get(handlers::get_expenses_overview))
         .nest(
             "/categories",
             categories_router.nest(

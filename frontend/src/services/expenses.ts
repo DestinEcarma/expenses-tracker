@@ -44,7 +44,7 @@ async function deleteCategory(id: string): Promise<void> {
 }
 
 async function getExpensesOverview(start: Date, end: Date): Promise<ExpensesOverview> {
-	return api.get("/expenses/overview", { params: { start, end } }).then((response) => response.data);
+	return api.get("/expenses/list-overview", { params: { start, end } }).then((response) => response.data);
 }
 
 async function addTransaction(id: string, amount: number, date: Date, note?: string): Promise<Transaction> {
