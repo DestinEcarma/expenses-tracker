@@ -19,6 +19,9 @@ pub fn router(state: Arc<ApiState>) -> Router<Arc<ApiState>> {
 
     let transactions_router =
         Router::new().route("/", get(transactions::list).post(transactions::create));
+    let transaction_router = Router::new()
+        .route("/edit", patch(transactions::edit))
+        .route("/delete", delete(transactions::delete));
 
     Router::new()
         .route("/", get(handlers::get_expenses_overview))
@@ -26,7 +29,10 @@ pub fn router(state: Arc<ApiState>) -> Router<Arc<ApiState>> {
             "/categories",
             categories_router.nest(
                 "/{id}",
-                category_router.nest("/transactions", transactions_router),
+                category_router.nest(
+                    "/transactions",
+                    transactions_router.nest("/{id}", transaction_router),
+                ),
             ),
         )
         .layer(middleware::from_fn_with_state(state, require_auth))
