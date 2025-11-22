@@ -136,7 +136,10 @@ impl<'a> CategoryRepo<'a> {
     }
 
     pub async fn delete(&self, category_id: RecordId) -> Result<(), DbError> {
-        let sql = "DELETE ONLY $category RETURN BEFORE;";
+        let sql = r#"
+        DELETE (SELECT VALUE id FROM $category<-user_category->category_transaction);
+        DELETE ONLY $category RETURN BEFORE;
+        "#;
 
         self.db.query(sql).bind(("category", category_id)).await?;
 
