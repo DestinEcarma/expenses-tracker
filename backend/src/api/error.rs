@@ -137,6 +137,7 @@ impl IntoResponse for ApiError {
             ApiError::PasswordHash(e) => error!("Password hashing error: {e}"),
             ApiError::Db(e) => match e {
                 DbError::NotCreated(t) => error!("Record not created for table: {t}"),
+                DbError::NotFound(_) => (),
                 _ => error!("Database error: {e}"),
             },
             ApiError::Jwt(e) => {
