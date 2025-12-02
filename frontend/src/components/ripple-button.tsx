@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { type HTMLMotionProps, motion, type Transition } from "motion/react";
 import * as React from "react";
 import { useCallback, useImperativeHandle, useRef, useState } from "react";
 
@@ -11,10 +10,15 @@ interface Ripple {
 	height: number;
 }
 
-interface RippleButtonProps extends HTMLMotionProps<"button"> {
+interface TransitionProps {
+	duration?: number;
+	easing?: "linear" | "ease-in" | "ease-out" | "ease-in-out";
+}
+
+interface RippleButtonProps extends React.ComponentProps<"button"> {
 	children: React.ReactNode;
 	rippleClassName?: string;
-	transition?: Transition;
+	transition?: TransitionProps;
 }
 
 function RippleButton({
@@ -28,10 +32,10 @@ function RippleButton({
 	onTouchMove,
 	className,
 	rippleClassName,
-	transition = { duration: 0.5, ease: "easeOut" },
+	transition = { duration: 500, easing: "ease-out" },
 	...props
 }: RippleButtonProps) {
-	const [ripples, setRipples] = useState<Ripple[]>([]);
+	const [ripple, setRipples] = useState<Ripple>();
 	const [active, setActive] = useState(false);
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -55,15 +59,13 @@ function RippleButton({
 			const r = Math.max(Math.hypot(x, y), Math.hypot(rightX, y), Math.hypot(x, bottomY), Math.hypot(rightX, bottomY));
 			const size = r * 2;
 
-			const newRipple: Ripple = {
+			setRipples({
 				id: Date.now(),
 				x: x - r,
 				y: y - r,
 				width: size,
 				height: size,
-			};
-
-			setRipples((prev) => [...prev, newRipple]);
+			});
 		},
 		[active],
 	);
@@ -80,7 +82,7 @@ function RippleButton({
 	const handleRelease = useCallback(
 		(event: React.MouseEvent | React.TouchEvent) => {
 			setActive(false);
-			setRipples([]);
+			setRipples(undefined);
 
 			if (onMouseUp && event.type === "mouseup") onMouseUp(event as React.MouseEvent<HTMLButtonElement>);
 			if (onMouseLeave && event.type === "mouseleave") onMouseLeave(event as React.MouseEvent<HTMLButtonElement>);
@@ -91,7 +93,7 @@ function RippleButton({
 	);
 
 	return (
-		<motion.button
+		<button
 			ref={buttonRef}
 			data-slot="ripple-button"
 			onMouseDown={handleLongPress}
@@ -105,26 +107,26 @@ function RippleButton({
 		>
 			{children}
 			<div className="absolute inset-0 h-full w-full overflow-hidden rounded-xl">
-				{ripples.map((ripple) => (
-					<motion.span
-						key={ripple.id}
-						initial={{ scale: 0, opacity: 0.1 }}
-						animate={{ scale: 1 }}
-						transition={transition}
-						className={cn(
-							"dark:bg-primary-foreground bg-muted-foreground absolute h-full w-full rounded-full",
+				<span
+					style={
+						{
+							top: ripple && `${ripple.y}px`,
+							left: ripple && `${ripple.x}px`,
+							width: ripple && `${ripple.width}px`,
+							height: ripple && `${ripple.height}px`,
+							"--ripple-duration": `${transition.duration}ms`,
+							"--ripple-easing": transition.easing,
+						} as React.CSSProperties
+					}
+					className={cn(
+						ripple && [
+							`animate-ripple dark:bg-primary-foreground bg-muted-foreground absolute h-full w-full rounded-full opacity-10`,
 							rippleClassName,
-						)}
-						style={{
-							top: ripple.y,
-							left: ripple.x,
-							width: ripple.width,
-							height: ripple.height,
-						}}
-					/>
-				))}
+						],
+					)}
+				></span>
 			</div>
-		</motion.button>
+		</button>
 	);
 }
 

@@ -217,4 +217,17 @@
 			transform: scaleY(1.5);
 		}
 	}
+
+	--ripple-duration: 500ms;
+	--ripple-easing: linear;
+	--animate-ripple: ripple var(--ripple-duration) var(--ripple-easing) forwards;
+
+	@keyframes ripple {
+		0% {
+			transform: scale(0);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
 }
